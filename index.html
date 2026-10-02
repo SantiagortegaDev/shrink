@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    :root {
+      --text-color: #222222;
+      --surface: #c0c0c0;
+      --button-highlight: #ffffff;
+      --button-face: #dfdfdf;
+      --button-shadow: #808080;
+      --window-frame: #0a0a0a;
+      --dialog-blue: #000080;
+      --dialog-blue-light: #1084d0;
+      --dialog-gray: #808080;
+      --dialog-gray-light: #b5b5b5;
+      --element-spacing: 8px;
+
+      --border-raised-outer: inset -1px -1px var(--window-frame), inset 1px 1px var(--button-highlight);
+      --border-raised-inner: inset -2px -2px var(--button-shadow), inset 2px 2px var(--button-face);
+      --border-sunken-outer: inset -1px -1px var(--button-highlight), inset 1px 1px var(--window-frame);
+      --border-sunken-inner: inset -2px -2px var(--button-face), inset 2px 2px var(--button-shadow);
+      --default-button-border-raised-outer: inset -2px -2px var(--window-frame), inset 1px 1px var(--window-frame);
+      --default-button-border-raised-inner: inset 2px 2px var(--button-highlight), inset -3px -3px var(--button-shadow), inset 3px 3px var(--button-face);
+      --default-button-border-sunken-outer: inset 2px 2px var(--window-frame), inset -1px -1px var(--window-frame);
+      --default-button-border-sunken-inner: inset -2px -2px var(--button-highlight), inset 3px 3px var(--button-shadow), inset -3px -3px var(--button-face);
+      --border-window-outer: inset -1px -1px var(--window-frame), inset 1px 1px var(--button-face);
+      --border-window-inner: inset -2px -2px var(--button-shadow), inset 2px 2px var(--button-highlight);
+      --border-status-field: inset -1px -1px var(--button-face), inset 1px 1px var(--button-shadow);
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      color: var(--text-color);
+      background-color: #008888;
+    }
+
+    button,
+    .window,
+    .title-bar {
+      font-family: "MS Sans Serif", Tahoma, Arial, sans-serif;
+      -webkit-font-smoothing: none;
+      font-size: 11px;
+    }
+
+    /* ---------- Buttons ---------- */
+    button,
+    input[type="submit"],
+    input[type="reset"] {
+      box-sizing: border-box;
+      border: none;
+      color: transparent;
+      text-shadow: 0 0 var(--text-color);
+      background: var(--surface);
+      box-shadow: var(--border-raised-outer), var(--border-raised-inner);
+      border-radius: 0;
+      min-width: 75px;
+      min-height: 23px;
+      padding: 0 12px;
+    }
+
+    button.default,
+    input[type="submit"].default,
+    input[type="reset"].default {
+      box-shadow: var(--default-button-border-raised-outer), var(--default-button-border-raised-inner);
+    }
+
+    button:not(:disabled):active,
+    input[type="submit"]:not(:disabled):active,
+    input[type="reset"]:not(:disabled):active {
+      box-shadow: var(--border-sunken-outer), var(--border-sunken-inner);
+      text-shadow: 1px 1px var(--text-color);
+    }
+
+    button.default:not(:disabled):active,
+    input[type="submit"].default:not(:disabled):active,
+    input[type="reset"].default:not(:disabled):active {
+      box-shadow: var(--default-button-border-sunken-outer), var(--default-button-border-sunken-inner);
+    }
+
+    button:focus,
+    input[type="submit"]:focus,
+    input[type="reset"]:focus {
+      outline: 1px dotted #000000;
+      outline-offset: -4px;
+    }
+
+    button::-moz-focus-inner,
+    input[type="submit"]::-moz-focus-inner,
+    input[type="reset"]::-moz-focus-inner {
+      border: 0;
+    }
+
+    button:disabled,
+    input[type="submit"]:disabled,
+    input[type="reset"]:disabled {
+      color: var(--button-shadow);
+      text-shadow: 1px 1px 0 var(--button-highlight);
+    }
+
+    /* ---------- Window ---------- */
+    .window {
+      box-shadow: var(--border-window-outer), var(--border-window-inner);
+      background: var(--surface);
+      padding: 3px;
+    }
+
+    .window-body {
+      margin: var(--element-spacing);
+    }
+
+    /* ---------- Title bar ---------- */
+    .title-bar {
+      background: linear-gradient(90deg, var(--dialog-blue), var(--dialog-blue-light));
+      padding: 3px 2px 3px 3px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .title-bar.inactive {
+      background: linear-gradient(90deg, var(--dialog-gray), var(--dialog-gray-light));
+    }
+
+    .title-bar-text {
+      font-weight: bold;
+      color: white;
+      letter-spacing: 0;
+      margin-right: 24px;
+    }
+
+    .title-bar-controls {
+      display: flex;
+    }
+
+    .title-bar-controls button {
+      padding: 0;
+      display: block;
+      min-width: 16px;
+      min-height: 14px;
+      background-repeat: no-repeat;
+    }
+
+    .title-bar-controls button:active {
+      padding: 0;
+    }
+
+    .title-bar-controls button:focus {
+      outline: none;
+    }
+
+    /* Iconos inline (sin archivos externos, funcionan offline) */
+    .title-bar-controls button[aria-label="Minimize"] {
+      background-image: url("data:image/svg+xml,%3Csvg width='6' height='2' viewBox='0 0 6 2' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='6' height='2' fill='black'/%3E%3C/svg%3E");
+      background-position: bottom 3px left 4px;
+    }
+
+    .title-bar-controls button[aria-label="Maximize"] {
+      background-image: url("data:image/svg+xml,%3Csvg width='9' height='9' viewBox='0 0 9 9' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' d='M9 0H0V9H9V0ZM8 2H1V8H8V2Z' fill='black'/%3E%3C/svg%3E");
+      background-position: top 2px left 3px;
+    }
+
+    .title-bar-controls button[aria-label="Restore"] {
+      background-image: url("data:image/svg+xml,%3Csvg width='8' height='9' viewBox='0 0 8 9' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' d='M2 0H8V6H7V7H8V8H2V7H1V6H2V0ZM3 1H7V5H3V1ZM0 3H1V8H0V3Z' fill='black'/%3E%3C/svg%3E");
+      background-position: top 2px left 3px;
+    }
+
+    .title-bar-controls button[aria-label="Close"] {
+      margin-left: 2px;
+      background-image: url("data:image/svg+xml,%3Csvg width='8' height='7' viewBox='0 0 8 7' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' d='M0 0H2V1H3V2H5V1H6V0H8V1H7V2H6V3H5V4H6V5H7V6H8V7H6V6H5V5H3V6H2V7H0V6H1V5H2V4H3V3H2V2H1V1H0V0Z' fill='black'/%3E%3C/svg%3E");
+      background-position: top 3px left 4px;
+    }
+
+    /* ---------- Status bar ---------- */
+    .status-bar {
+      margin: 0 1px;
+      display: flex;
+      gap: 1px;
+    }
+
+    .status-bar-field {
+      box-shadow: var(--border-status-field);
+      flex-grow: 1;
+      padding: 2px 3px;
+      margin: 0;
+    }
+
+    .center {
+      display: flex;
+      justify-content: center;
+      /* Centra horizontalmente */
+      align-items: center;
+      /* Centra verticalmente */
+      height: 100vh;
+      /* Altura total de la pantalla */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="center">
+    <div class="window" style="width: 300px">
+      <div class="title-bar">
+        <div class="title-bar-text">Web Properties</div>
+      </div>
+      <div class="window-body">
+        <p style="font-size: 13px;">This is some of the information the websites can know about your browser:</p>
+        <p id="r"><b>Resolution:</b> loading...</p>
+        <p id="n"><b>Browser:</b> loading...</p>
+        <p id="o"><b>Online:</b> loading...</p>
+        <p id="p"><b>Platform:</b> loading...</p>
+        <p id="c"><b>Mouse Position:</b> 0, 0</p>
+        <p id="s"><b>Mouse scroll:</b> waiting the user to scroll...</p>
+
+        <p id="z"><b>Time zone:</b> loading...</p>
+      </div>
+      <div class="status-bar">
+        <p class="status-bar-field" id="fps">Fps: </p>
+        <p class="status-bar-field" id="l">Lang</p>
+        <p class="status-bar-field" id="t">in the website</p>
+      </div>
+    </div>
+  </div>
+  <script>
+    const esperar = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    let seconds = 0;
+    let minutes = 0;
+    let hours = 0;
+    let fpsElement = document.getElementById("fps");
+
+    let lastUpdate = performance.now();
+    let frames = 0;
+
+    function render(now) {
+      frames++;
+
+      const elapsed = now - lastUpdate;
+      if (elapsed >= 100) {
+        fpsElement.innerHTML = "<b>Fps: </b>"+(frames * 1000 / elapsed).toFixed(2);
+        frames = 0;
+        lastUpdate = now;
+      }
+
+      requestAnimationFrame(render);
+    }
+
+    requestAnimationFrame(render);
+    async function bucleEficiente() {
+      let activo = true;
+      while (activo) {
+        const informacion = navigator.userAgent;
+        const width = window.innerWidth || document.documentElement.clientWidth ||
+          document.body.clientWidth;
+        const height = window.innerHeight || document.documentElement.clientHeight ||
+          document.body.clientHeight;
+        document.getElementById("r").innerHTML = "<b>Resolution:</b> " + width + " x " + height;
+        if (navigator.userAgentData) {
+          const marcas = navigator.userAgentData.brands;
+
+          document.getElementById("n").innerHTML = "<b>Browser:</b> " + JSON.stringify(marcas);
+        } else {
+
+          document.getElementById("n").innerHTML = "<b>Browser:</b> " + JSON.stringify(navigator.userAgent);
+        }
+        if (navigator.onLine) {
+          document.getElementById("o").innerHTML = "<b>Online:</b> yes!";
+        } else {
+          document.getElementById("o").innerHTML = "<b>Online:</b> no :(";
+        }
+        if (navigator.platform) {
+          document.getElementById("p").innerHTML = "<b>Platform:</b> " + navigator.platform;
+        } else {
+          document.getElementById("p").innerHTML = "<b>Platform:</b> sorry i don't have that info";
+        }
+        const info = document.getElementById('c');
+
+        document.addEventListener('mousemove', (evento) => {
+          const x = evento.pageX;
+          const y = evento.pageY;
+
+          info.textContent = `X: ${x}, Y: ${y}`;
+          document.getElementById("c").innerHTML = "<b>Mouse Position:</b> " + x + ", " + y;
+        });
+        window.addEventListener('wheel', function (event) {
+          if (event.deltaY > 0) {
+            document.getElementById("s").innerHTML = "<b>Mouse scroll:</b> down";
+          } else if (event.deltaY < 0) {
+            document.getElementById("s").innerHTML = "<b>Mouse scroll:</b> up";
+          }
+        });
+        const zonaHorariaUsuario = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+        // Mostrar los valores en los elementos HTML
+        document.getElementById('l').innerHTML = navigator.language || navigator.userLanguage;
+        document.getElementById('z').innerHTML = "<b>Time zone:</b> " + zonaHorariaUsuario;
+        seconds++;
+
+        if (seconds > 60) {
+          minutes++;
+          seconds = 0;
+        }
+        if (minutes > 60) {
+          hours++;
+          minutes = 0;
+          seconds = 0;
+        }
+        if (minutes == 0 && hours == 0) {
+          document.getElementById('t').innerHTML = seconds + " sec in the website"
+        }
+        if (minutes > 0 && hours == 0) {
+          document.getElementById('t').innerHTML = minutes + " min in the website"
+        }
+        if (hours > 0) {
+          document.getElementById('t').innerHTML = hours + " h in the website"
+        }
+
+        // Pausa el bucle por 10 milisegundos, liberando el hilo principal
+        await esperar(1000);
+      }
+    }
+    bucleEficiente();
+
+
+
+  </script>
+</body>
+
+</html>
